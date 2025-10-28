@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FuturePath - Welcome!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 30px;
+            padding: 3rem;
+            max-width: 800px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+        }
+        
+        p {
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .big-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem 3rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin: 1rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .big-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+        }
+        
+        .option {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: left;
+        }
+        
+        .option h2 {
+            color: #333;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .badge {
+            background: #4caf50;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .badge.advanced {
+            background: #ff9800;
+        }
+        
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        ul li {
+            padding: 0.5rem 0;
+            color: #666;
+        }
+        
+        ul li:before {
+            content: "✅ ";
+            margin-right: 0.5rem;
+        }
+        
+        .divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #667eea, transparent);
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">🚀</div>
+        <h1>Welcome to FuturePath!</h1>
+        <p>Choose how you want to get started:</p>
+        
+        <div class="divider"></div>
+        
+        <div class="option">
+            <h2>
+                Option 1: Static HTML Version
+                <span class="badge">EASIEST</span>
+            </h2>
+            <p><strong>✨ No installation needed! Works instantly!</strong></p>
+            <ul>
+                <li>Just click the button below</li>
+                <li>Works in any browser</li>
+                <li>No setup required</li>
+                <li>All features included</li>
+            </ul>
+            <a href="index.html" class="big-button">
+                🎯 Launch FuturePath Now!
+            </a>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="option">
+            <h2>
+                Option 2: Full Next.js Version
+                <span class="badge advanced">ADVANCED</span>
+            </h2>
+            <p><strong>🔧 Requires setup but has more features</strong></p>
+            <ul>
+                <li>Real AI with OpenAI</li>
+                <li>User accounts & authentication</li>
+                <li>Saves your progress</li>
+                <li>Points & badges system</li>
+                <li>Database integration</li>
+            </ul>
+            <p style="margin-top: 1rem;">
+                <strong>Setup Required:</strong><br>
+                1. Run: <code style="background: #e0e0e0; padding: 0.3rem 0.8rem; border-radius: 5px;">npm install</code><br>
+                2. Create .env file<br>
+                3. Run: <code style="background: #e0e0e0; padding: 0.3rem 0.8rem; border-radius: 5px;">npm run dev</code>
+            </p>
+            <p style="font-size: 0.9rem; color: #999; margin-top: 1rem;">
+                📖 See QUICK_START.md or SETUP_GUIDE.md for instructions
+            </p>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div style="margin-top: 3rem;">
+            <h3 style="color: #333; margin-bottom: 1rem;">📚 Documentation</h3>
+            <p style="font-size: 1rem;">
+                <strong>START_HERE.txt</strong> - Quick overview<br>
+                <strong>STATIC_VERSION_README.md</strong> - Static version guide<br>
+                <strong>QUICK_START.md</strong> - Next.js 5-minute setup<br>
+                <strong>README.md</strong> - Complete documentation
+            </p>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <p style="margin-top: 2rem; font-size: 1rem; color: #999;">
+            <strong>Recommended:</strong> Try the Static Version first!<br>
+            Just click the blue button above 👆
+        </p>
+        
+        <p style="margin-top: 2rem; font-size: 0.9rem; color: #999;">
+            Made with ❤️ for students exploring their future
+        </p>
+    </div>
+</body>
+</html>
+

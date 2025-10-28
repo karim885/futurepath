@@ -1,0 +1,143 @@
+[
+  {
+    "name": "Massachusetts Institute of Technology (MIT)",
+    "country": "United States",
+    "ranking": 1,
+    "website": "https://www.mit.edu",
+    "fields": ["Engineering", "Computer Science", "Physics", "Mathematics", "Business"]
+  },
+  {
+    "name": "Stanford University",
+    "country": "United States",
+    "ranking": 2,
+    "website": "https://www.stanford.edu",
+    "fields": ["Computer Science", "Engineering", "Business", "Medicine", "Law"]
+  },
+  {
+    "name": "Harvard University",
+    "country": "United States",
+    "ranking": 3,
+    "website": "https://www.harvard.edu",
+    "fields": ["Law", "Business", "Medicine", "Arts", "Sciences"]
+  },
+  {
+    "name": "University of Oxford",
+    "country": "United Kingdom",
+    "ranking": 4,
+    "website": "https://www.ox.ac.uk",
+    "fields": ["Arts", "Sciences", "Medicine", "Law", "Business"]
+  },
+  {
+    "name": "University of Cambridge",
+    "country": "United Kingdom",
+    "ranking": 5,
+    "website": "https://www.cam.ac.uk",
+    "fields": ["Sciences", "Engineering", "Arts", "Medicine", "Mathematics"]
+  },
+  {
+    "name": "California Institute of Technology (Caltech)",
+    "country": "United States",
+    "ranking": 6,
+    "website": "https://www.caltech.edu",
+    "fields": ["Physics", "Engineering", "Chemistry", "Biology", "Astronomy"]
+  },
+  {
+    "name": "ETH Zurich",
+    "country": "Switzerland",
+    "ranking": 7,
+    "website": "https://ethz.ch",
+    "fields": ["Engineering", "Computer Science", "Mathematics", "Physics", "Architecture"]
+  },
+  {
+    "name": "Imperial College London",
+    "country": "United Kingdom",
+    "ranking": 8,
+    "website": "https://www.imperial.ac.uk",
+    "fields": ["Engineering", "Medicine", "Business", "Sciences", "Computer Science"]
+  },
+  {
+    "name": "University of Chicago",
+    "country": "United States",
+    "ranking": 9,
+    "website": "https://www.uchicago.edu",
+    "fields": ["Economics", "Business", "Law", "Medicine", "Sciences"]
+  },
+  {
+    "name": "University College London (UCL)",
+    "country": "United Kingdom",
+    "ranking": 10,
+    "website": "https://www.ucl.ac.uk",
+    "fields": ["Arts", "Sciences", "Engineering", "Medicine", "Architecture"]
+  },
+  {
+    "name": "National University of Singapore (NUS)",
+    "country": "Singapore",
+    "ranking": 11,
+    "website": "https://www.nus.edu.sg",
+    "fields": ["Engineering", "Business", "Computer Science", "Medicine", "Law"]
+  },
+  {
+    "name": "Princeton University",
+    "country": "United States",
+    "ranking": 12,
+    "website": "https://www.princeton.edu",
+    "fields": ["Mathematics", "Physics", "Engineering", "Economics", "Arts"]
+  },
+  {
+    "name": "Yale University",
+    "country": "United States",
+    "ranking": 13,
+    "website": "https://www.yale.edu",
+    "fields": ["Law", "Medicine", "Business", "Arts", "Sciences"]
+  },
+  {
+    "name": "University of Toronto",
+    "country": "Canada",
+    "ranking": 14,
+    "website": "https://www.utoronto.ca",
+    "fields": ["Medicine", "Engineering", "Computer Science", "Business", "Arts"]
+  },
+  {
+    "name": "University of Melbourne",
+    "country": "Australia",
+    "ranking": 15,
+    "website": "https://www.unimelb.edu.au",
+    "fields": ["Medicine", "Law", "Business", "Engineering", "Arts"]
+  },
+  {
+    "name": "Technical University of Munich",
+    "country": "Germany",
+    "ranking": 16,
+    "website": "https://www.tum.de",
+    "fields": ["Engineering", "Computer Science", "Physics", "Business", "Medicine"]
+  },
+  {
+    "name": "Sorbonne University",
+    "country": "France",
+    "ranking": 17,
+    "website": "https://www.sorbonne-universite.fr",
+    "fields": ["Arts", "Sciences", "Medicine", "Engineering", "Law"]
+  },
+  {
+    "name": "Tsinghua University",
+    "country": "China",
+    "ranking": 18,
+    "website": "https://www.tsinghua.edu.cn",
+    "fields": ["Engineering", "Computer Science", "Business", "Sciences", "Architecture"]
+  },
+  {
+    "name": "University of British Columbia",
+    "country": "Canada",
+    "ranking": 19,
+    "website": "https://www.ubc.ca",
+    "fields": ["Engineering", "Business", "Sciences", "Medicine", "Arts"]
+  },
+  {
+    "name": "University of Sydney",
+    "country": "Australia",
+    "ranking": 20,
+    "website": "https://www.sydney.edu.au",
+    "fields": ["Business", "Medicine", "Engineering", "Arts", "Law"]
+  }
+]
+

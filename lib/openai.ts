@@ -21,22 +21,33 @@ export async function generateQuizQuestions() {
 
 export async function analyzeQuizAnswers(answers: { question: string; answer: string }[]) {
   try {
-    const prompt = `You are a career counselor AI. Based on the following answers from a teenager, recommend:
-1. Top 5 career paths with match percentages (0-100%)
-2. Explain why each career matches their profile
+    const prompt = `You are a professional career counselor AI for teenagers and young adults. 
 
-Answers:
+Analyze the following quiz answers and provide ACCURATE, WELL-REASONED recommendations.
+
+STRICT REQUIREMENTS:
+1) If answers are UNCLEAR, TOO SHORT, or VAGUE, set confidence: "low" and suggest asking for clarification.
+2) Provide exactly 5 career paths with realistic match percentages (10-95% range only).
+3) Base match percentages on CONCRETE evidence from answers (not guesswork).
+4) Mention specific subjects, interests, or career goals mentioned by the user.
+5) If no country is mentioned, note "global opportunities" - do NOT invent countries.
+
+TONE: Be encouraging, specific, and honest. Never guess or fabricate information.
+
+STUDENT ANSWERS:
 ${answers.map((a, i) => `Q${i + 1}: ${a.question}\nA${i + 1}: ${a.answer}`).join('\n\n')}
 
-Respond in JSON format:
+STRICT JSON OUTPUT (no markdown, no extra text):
 {
   "careers": [
     {
-      "title": "Career Name",
-      "description": "Why this career matches (2-3 sentences)",
+      "title": "Exact career title (e.g., 'Software Engineer')",
+      "description": "Why this matches based on answers (2-3 sentences with specific evidence)",
       "matchPercentage": 85
     }
-  ]
+  ],
+  "confidence": "high" or "medium" or "low",
+  "notes": "brief explanation of confidence level and any missing information"
 }`;
 
     const response = await openai.chat.completions.create({
@@ -44,15 +55,15 @@ Respond in JSON format:
       messages: [
         {
           role: 'system',
-          content: 'You are an expert career counselor helping teenagers discover their future paths.',
+          content: 'You are a professional career counselor. Provide accurate, evidence-based recommendations. Be honest when information is insufficient.',
         },
         {
           role: 'user',
           content: prompt,
         },
       ],
-      temperature: 0.7,
-      max_tokens: 1000,
+      temperature: 0.5,
+      max_tokens: 1200,
     });
 
     const content = response.choices[0].message.content;
@@ -60,7 +71,14 @@ Respond in JSON format:
       throw new Error('No response from OpenAI');
     }
 
-    return JSON.parse(content);
+    const parsed = JSON.parse(content);
+
+    // Validate and improve recommendations
+    if (parsed.confidence === 'low') {
+      parsed.notes = 'Some answers were unclear. Please retake the quiz with more specific details for better recommendations.';
+    }
+
+    return parsed;
   } catch (error) {
     console.error('OpenAI API error:', error);
     // Fallback recommendations

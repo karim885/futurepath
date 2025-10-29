@@ -7,7 +7,9 @@ const questions = [
     "What's your budget range for university education? (Low, Medium, High, No constraint)",
     "Do you prefer theoretical learning or hands-on practical work?",
     "What kind of work environment appeals to you? (Office, Lab, Outdoors, Remote)",
-    "Are you interested in research, entrepreneurship, or working for companies?"
+    "Are you interested in research, entrepreneurship, or working for companies?",
+    "What's your current GPA (on a 4.0 scale)?",
+    "Which field are you most interested in? (e.g., Computer Science, Business, Medicine, Law, Engineering, Arts)"
 ];
 
 // Universities Data
@@ -187,6 +189,7 @@ const careerDatabase = {
 let currentQuestionIndex = 0;
 let answers = [];
 let userProfile = {};
+let numericGpa = null;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
@@ -310,6 +313,17 @@ function analyzeAnswer(answer, questionIndex) {
     if (questionIndex === 3) { // Countries
         userProfile.countries = lowerAnswer.split(',').map(c => c.trim());
     }
+
+    if (questionIndex === 8) { // GPA
+        const gpaMatch = answer.match(/\d+(\.\d+)?/);
+        if (gpaMatch) {
+            numericGpa = Math.min(4.0, Math.max(0, parseFloat(gpaMatch[0])));
+        }
+    }
+
+    if (questionIndex === 9) { // Preferred field
+        userProfile.preferredField = answer.trim();
+    }
 }
 
 function updateProgress() {
@@ -349,6 +363,23 @@ function showResults() {
     
     // Generate university recommendations
     const recommendedUnis = generateUniversityRecommendations();
+
+    // Show featured university (top ranked in chosen country and field, filtered by GPA)
+    const featured = pickFeaturedUniversity(recommendedUnis);
+    const featuredWrap = document.getElementById('featuredUniversity');
+    if (featured) {
+        featuredWrap.classList.remove('hidden');
+        document.getElementById('featuredUniRanking').innerText = `#${featured.ranking}`;
+        document.getElementById('featuredUniName').innerText = featured.name;
+        document.getElementById('featuredUniCountry').innerText = `📍 ${featured.country}`;
+        document.getElementById('featuredUniLink').href = featured.website;
+        const fieldsHtml = featured.fields.slice(0, 3).map(field => (
+            `<span style="background: #e3f2fd; color: #1976d2; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.85rem; margin-right: 0.5rem; display: inline-block; margin-top: 0.5rem;">${field}</span>`
+        )).join('');
+        document.getElementById('featuredUniFields').innerHTML = fieldsHtml;
+    } else {
+        featuredWrap.classList.add('hidden');
+    }
     const uniResults = document.getElementById('universityResults');
     uniResults.innerHTML = '';
     
@@ -396,8 +427,50 @@ function generateUniversityRecommendations() {
         }
     }
     
-    // Return top 10
-    return recommended.slice(0, 10);
+    // Further filter by preferred field if provided
+    if (userProfile.preferredField && userProfile.preferredField.length > 0) {
+        const fieldLower = userProfile.preferredField.toLowerCase();
+        const byField = recommended.filter(uni =>
+            uni.fields.some(f => f.toLowerCase().includes(fieldLower))
+        );
+        if (byField.length > 0) recommended = byField;
+    }
+
+    // Sort by ranking asc
+    recommended.sort((a, b) => a.ranking - b.ranking);
+
+    // Return top 12 to show more options
+    return recommended.slice(0, 12);
+}
+
+function pickFeaturedUniversity(list) {
+    if (!list || list.length === 0) return null;
+
+    // Prefer a university in preferred country (if any)
+    let pool = list;
+    if (userProfile.countries && userProfile.countries.length > 0) {
+        const inCountry = list.filter(uni =>
+            userProfile.countries.some(c =>
+                uni.country.toLowerCase().includes(c) || c.includes(uni.country.toLowerCase())
+            )
+        );
+        if (inCountry.length > 0) pool = inCountry;
+    }
+
+    // If GPA provided and high (>=3.7), favor top-5 ranked
+    if (numericGpa !== null && numericGpa >= 3.7) {
+        const top5 = pool.filter(uni => uni.ranking <= 5);
+        if (top5.length > 0) return top5[0];
+    }
+
+    // If GPA is moderate (>=3.0), favor top-10
+    if (numericGpa !== null && numericGpa >= 3.0) {
+        const top10 = pool.filter(uni => uni.ranking <= 10);
+        if (top10.length > 0) return top10[0];
+    }
+
+    // Otherwise pick the best ranked in pool
+    return pool.sort((a, b) => a.ranking - b.ranking)[0];
 }
 
 function createUniversityCard(uni) {
@@ -417,14 +490,67 @@ function createUniversityCard(uni) {
     return card;
 }
 
-function loadAllUniversities() {
+async function loadAllUniversities() {
     const container = document.getElementById('allUniversities');
     if (!container) return;
     
-    container.innerHTML = '';
-    universities.forEach(uni => {
-        container.appendChild(createUniversityCard(uni));
-    });
+    container.innerHTML = '<div style="text-align: center; padding: 3rem;"><p>Loading 100+ universities...</p></div>';
+    
+    try {
+        // Fetch from Hipolabs API (no country specified = global)
+        const response = await fetch('/api/universities?limit=150');
+        const data = await response.json();
+        
+        if (data.universities && data.universities.length > 0) {
+            container.innerHTML = '';
+            data.universities.forEach((uni, index) => {
+                // Create enhanced card with more info
+                const card = document.createElement('div');
+                card.className = 'university-card';
+                card.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                        <div style="flex: 1;">
+                            <h4 class="uni-name">${uni.name}</h4>
+                            <p class="uni-country">📍 ${uni.country}${uni.city ? ', ' + uni.city : ''}</p>
+                        </div>
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 0.5rem 1rem; border-radius: 50px; font-weight: bold; font-size: 0.9rem;">
+                            Top University
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <span style="background: #e3f2fd; color: #1976d2; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.85rem; display: inline-block;">
+                            Official Website Available
+                        </span>
+                    </div>
+                    <a href="${uni.website || '#'}" target="_blank" class="uni-link">Visit Website →</a>
+                `;
+                
+                // Animate appearance
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                container.appendChild(card);
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.3s ease-out';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 10);
+            });
+        } else {
+            // Fallback to static list
+            container.innerHTML = '';
+            universities.forEach(uni => {
+                container.appendChild(createUniversityCard(uni));
+            });
+        }
+    } catch (error) {
+        console.error('Failed to load universities from API:', error);
+        // Fallback to static list
+        container.innerHTML = '';
+        universities.forEach(uni => {
+            container.appendChild(createUniversityCard(uni));
+        });
+    }
 }
 
 // Add some fun interactions
@@ -450,4 +576,5 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(card);
     });
 });
+
 

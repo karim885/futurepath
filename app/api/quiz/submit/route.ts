@@ -4,9 +4,8 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
 import QuizResult from '@/models/QuizResult';
-import { analyzeQuizAnswers, recommendUniversities } from '@/lib/openai';
+import { analyzeQuizAnswers } from '@/lib/openai';
 import { checkBadges } from '@/lib/badges';
-import universities from '@/data/universities.json';
 
 export async function POST(request: Request) {
   try {
@@ -23,6 +22,8 @@ export async function POST(request: Request) {
     // Analyze answers with AI
     const aiResponse = await analyzeQuizAnswers(answers);
     const careers = aiResponse.careers || [];
+    const confidence = aiResponse.confidence || 'high';
+    const notes = aiResponse.notes || '';
 
     // Extract preferred countries from answers
     const countryAnswer = answers.find((a) =>
@@ -35,13 +36,58 @@ export async function POST(request: Request) {
           .filter((c: string) => c.length > 0)
       : [];
 
-    // Recommend universities
-    const careerTitles = careers.map((c: any) => c.title);
-    const recommendedUniversities = await recommendUniversities(
-      careerTitles,
-      preferredCountries,
-      universities
-    );
+    // Fetch universities from Hipolabs API
+    let recommendedUniversities: any[] = [];
+    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+
+    async function fetchHipolabs(country?: string, limit = 100) {
+      try {
+        const endpoint = new URL(`${baseUrl}/api/universities`);
+        if (country) endpoint.searchParams.set('country', country);
+        endpoint.searchParams.set('limit', limit.toString());
+        const res = await fetch(endpoint.toString(), { cache: 'no-store' });
+        if (!res.ok) return [] as any[];
+        const json = await res.json();
+        return (json.universities || []) as any[];
+      } catch (err) {
+        console.error('Failed to fetch from Hipolabs:', err);
+        return [] as any[];
+      }
+    }
+
+    if (preferredCountries.length > 0) {
+      // Fetch from user's preferred countries
+      const promises = preferredCountries.slice(0, 3).map((c: string) => 
+        fetchHipolabs(c, 50)
+      );
+      const lists = await Promise.all(promises);
+      recommendedUniversities = lists.flat();
+    } else {
+      // Global diverse set
+      recommendedUniversities = await fetchHipolabs(undefined, 100);
+    }
+
+    // De-duplicate
+    const seen = new Set<string>();
+    recommendedUniversities = recommendedUniversities.filter((u: any) => {
+      const key = `${u.name}|${u.country}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
+    // Sort and limit, then enhance with career-based description
+    recommendedUniversities = recommendedUniversities.slice(0, 30).map((u: any) => ({
+      name: u.name,
+      country: u.country,
+      ranking: undefined,
+      website: u.website || `https://www.google.com/search?q=${encodeURIComponent(u.name)}`,
+      field: careers?.[0]?.title || 'General Studies',
+      city: u.city || null,
+      description: careers?.[0]
+        ? `Strong programs in ${careers[0].title} and related fields. Consider researching their specific departments.`
+        : 'Reputable institution with diverse academic programs. Research their specific programs for your interests.',
+    }));
 
     // Calculate points
     const pointsPerQuestion = 10;
@@ -54,14 +100,8 @@ export async function POST(request: Request) {
       userId: session?.user?.id || undefined,
       guestId: !session ? guestId : undefined,
       answers,
-      careerRecommendations: careers,
-      universityRecommendations: recommendedUniversities.map((uni) => ({
-        name: uni.name,
-        country: uni.country,
-        ranking: uni.ranking,
-        website: uni.website,
-        field: uni.fields[0],
-      })),
+      careerRecommendations: { careers, confidence, notes },
+      universityRecommendations: recommendedUniversities,
       pointsEarned,
       completedAt: new Date(),
     });

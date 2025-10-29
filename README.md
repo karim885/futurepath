@@ -349,5 +349,6 @@ For issues or questions:
 
 *Discover your future. Find your path.* 🚀
 
-#   f u t u r e p a t h  
+#   f u t u r e p a t h 
+ 
  

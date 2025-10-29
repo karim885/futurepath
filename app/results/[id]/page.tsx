@@ -23,12 +23,19 @@ interface Career {
   matchPercentage: number;
 }
 
+interface CareerRecommendations extends Array<Career> {
+  confidence?: string;
+  notes?: string;
+}
+
 interface University {
   name: string;
   country: string;
-  ranking: number;
+  ranking?: number;
   website: string;
   field: string;
+  city?: string | null;
+  description?: string;
 }
 
 export default function ResultsPage() {
@@ -38,6 +45,8 @@ export default function ResultsPage() {
   const [universities, setUniversities] = useState<University[]>([]);
   const [pointsEarned, setPointsEarned] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [confidence, setConfidence] = useState<string>('high');
+  const [notes, setNotes] = useState<string>('');
 
   useEffect(() => {
     loadResults();
@@ -46,7 +55,10 @@ export default function ResultsPage() {
   const loadResults = async () => {
     try {
       const response = await axios.get(`/api/results/${params.id}`);
-      setCareers(response.data.careerRecommendations);
+      const careerData = response.data.careerRecommendations;
+      setCareers(careerData);
+      setConfidence(careerData.confidence || 'high');
+      setNotes(careerData.notes || '');
       setUniversities(response.data.universityRecommendations);
       setPointsEarned(response.data.pointsEarned);
     } catch (error) {
@@ -104,6 +116,14 @@ export default function ResultsPage() {
             <p className="text-gray-500">
               Here are your personalized career recommendations and top universities
             </p>
+
+            {confidence === 'low' && (
+              <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-xl max-w-2xl mx-auto">
+                <p className="text-sm text-yellow-800">
+                  <strong>Note:</strong> {notes || 'Some answers were unclear. For more accurate recommendations, consider retaking the quiz with more specific details about your interests and goals.'}
+                </p>
+              </div>
+            )}
 
             <button
               onClick={handleShare}
@@ -200,9 +220,12 @@ export default function ResultsPage() {
                           <Globe className="w-4 h-4" />
                           {uni.country}
                         </div>
-                        <div className="font-semibold text-blue-600">
-                          #{uni.ranking}
-                        </div>
+                        {typeof uni.ranking !== 'undefined' && (
+                          <div className="font-semibold text-blue-600">#{uni.ranking}</div>
+                        )}
+                        {uni.city && (
+                          <div className="text-gray-500">{uni.city}</div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -212,6 +235,10 @@ export default function ResultsPage() {
                       {uni.field}
                     </span>
                   </div>
+
+                  {uni.description && (
+                    <p className="text-gray-600 mb-4">{uni.description}</p>
+                  )}
 
                   <a
                     href={uni.website}

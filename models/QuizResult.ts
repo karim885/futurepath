@@ -19,6 +19,8 @@ export interface IQuizResult {
     ranking?: number;
     website?: string;
     field: string;
+    city?: string | null;
+    description?: string;
   }[];
   pointsEarned: number;
   completedAt: Date;
